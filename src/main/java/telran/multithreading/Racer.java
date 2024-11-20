@@ -13,7 +13,6 @@ public class Racer extends Thread {
     public void run() {
         for (int i = 0; i < race.getDistance(); i++) {
             if (race.getWinner() != -1) {
-                // Если уже есть победитель, выходим из цикла
                 return;
             }
             System.out.printf("Racer %d: iteration %d\n", number, i + 1);
