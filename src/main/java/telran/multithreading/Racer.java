@@ -1,17 +1,32 @@
 package telran.multithreading;
 
-public class Racer extends Thread{
+import java.util.Random;
+
+public class Racer extends Thread {
     private Race race;
     private int number;
+
     public Racer(Race race, int number) {
         this.race = race;
         this.number = number;
     }
-    public void run(){
-        //TODO
-        //Running cycle containing number of iterations from the Race reference as the distance 
-        //Each iteration is printing out the number of the thread for game tracing to see game dynamics
-        
-    }
 
+    @Override
+    public void run() {
+        Random random = new Random();
+        for (int i = 0; i < race.getDistance(); i++) {
+            try {
+                int sleepTime = race.getMinSleepTimeout() + 
+                                random.nextInt(race.getMaxSleepTimeout() - race.getMinSleepTimeout() + 1);
+                Thread.sleep(sleepTime);
+                System.out.printf("Racer %d completed iteration %d%n", number, i + 1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        if (race.setWinner(number)) {
+            System.out.printf("Racer %d is the winner!%n", number);
+        }
+    }
 }
