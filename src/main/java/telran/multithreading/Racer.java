@@ -1,7 +1,5 @@
 package telran.multithreading;
 
-import java.util.Random;
-
 public class Racer extends Thread {
     private Race race;
     private int number;
@@ -13,20 +11,22 @@ public class Racer extends Thread {
 
     @Override
     public void run() {
-        Random random = new Random();
         for (int i = 0; i < race.getDistance(); i++) {
+            if (race.getWinner() != -1) {
+                // Если уже есть победитель, выходим из цикла
+                return;
+            }
+            System.out.printf("Racer %d: iteration %d\n", number, i + 1);
             try {
-                int sleepTime = race.getMinSleepTimeout() + 
-                                random.nextInt(race.getMaxSleepTimeout() - race.getMinSleepTimeout() + 1);
-                Thread.sleep(sleepTime);
-                System.out.printf("Racer %d completed iteration %d%n", number, i + 1);
+                Thread.sleep(race.getRandomSleepTime());
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                return;
             }
         }
 
         if (race.setWinner(number)) {
-            System.out.printf("Racer %d is the winner!%n", number);
+            System.out.printf("Congratulations to Racer %d - winner!\n", number);
         }
     }
 }
