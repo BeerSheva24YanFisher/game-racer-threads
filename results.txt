@@ -1,0 +1,5 @@
+Results Table:
+Place  Racer Number Running Time (ms)
+1      2            763            
+2      1            765            
+3      3            765            

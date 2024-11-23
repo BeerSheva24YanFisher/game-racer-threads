@@ -1,33 +1,38 @@
 package telran.multithreading;
 
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Race {
     private int distance;
-    private int minSleepTime;
-    private int maxSleepTime;
-    private AtomicInteger winner = new AtomicInteger(-1);
+    private int minSleep;
+    private int maxSleep;
+    private long startTime; // время старта гонки
+    AtomicInteger winner = new AtomicInteger(-1);
 
-    public Race(int distance, int minSleepTime, int maxSleepTime) {
+    public Race(int distance, int minSleep, int maxSleep) {
         this.distance = distance;
-        this.minSleepTime = minSleepTime;
-        this.maxSleepTime = maxSleepTime;
+        this.minSleep = minSleep;
+        this.maxSleep = maxSleep;
+        this.startTime = System.currentTimeMillis();
+    }
+
+    public int getWinner() {
+        return winner.get();
     }
 
     public int getDistance() {
         return distance;
     }
 
-    public int getRandomSleepTime() {
-        return ThreadLocalRandom.current().nextInt(minSleepTime, maxSleepTime + 1);
+    public int getMinSleep() {
+        return minSleep;
     }
 
-    public boolean setWinner(int racerNumber) {
-        return winner.compareAndSet(-1, racerNumber);
+    public int getMaxSleep() {
+        return maxSleep;
     }
 
-    public int getWinner() {
-        return winner.get();
+    public long getStartTime() {
+        return startTime;
     }
 }
