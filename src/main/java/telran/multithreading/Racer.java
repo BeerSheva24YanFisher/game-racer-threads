@@ -1,40 +1,52 @@
 package telran.multithreading;
 
+import java.time.Instant;
 import java.util.Random;
 
 public class Racer extends Thread {
-    private Race race;
-    private int number;
-    private long finishTime; // время завершения гонки
+	private Race race;
+	private int number;
+	private Instant finishTime;
 
-    public Racer(Race race, int number) {
-        this.race = race;
-        this.number = number;
-    }
+	public Racer(Race race, int number) {
+		this.race = race;
+		this.number = number;
+	}
 
-    public long getFinishTime() {
-        return finishTime;
-    }
+	@Override
+	public void run() {
+		int minSleep = race.getMinSleep();
+		int maxSleep = race.getMaxSleep();
+		int distance = race.getDistance();
+		Random random = new Random();
+		for (int i = 0; i < distance; i++) {
+			try {
+				sleep(random.nextInt(minSleep, maxSleep + 1));
+				System.out.printf("%d - step %d\n", number, i);
+			} catch (InterruptedException e) {
+			}
+		}
+		try {
+			race.lock.lock();
+			finishTime = Instant.now();
+			finishRace();
 
-    public int getNumber() {
-        return number;
-    }
+		} finally {
+			race.lock.unlock();
+		}
+	}
 
-    @Override
-    public void run() {
-        int minSleep = race.getMinSleep();
-        int maxSleep = race.getMaxSleep();
-        int distance = race.getDistance();
-        Random random = new Random();
+	private void finishRace() {
+		race.getResultsTable().add(this);
 
-        for (int i = 0; i < distance; i++) {
-            try {
-                sleep(random.nextInt(minSleep, maxSleep + 1));
-                System.out.printf("%d - step %d\n", number, i);
-            } catch (InterruptedException e) {}
-        }
-        
-        finishTime = System.currentTimeMillis();
-        race.winner.compareAndSet(-1, number);
-    }
+	}
+
+	public Instant getFinsishTime() {
+		return finishTime;
+
+	}
+
+	public int getNumber() {
+		return number;
+	}
 }
